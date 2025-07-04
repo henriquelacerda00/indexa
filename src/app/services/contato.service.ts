@@ -12,7 +12,7 @@ import { environment } from '../../environments/environment';
 export class ContatoService {
 
 
-  private readonly API = environment + '/contatos'
+  private readonly API = environment.apiUrl + '/contatos'
 
   constructor(private http: HttpClient) {
 
