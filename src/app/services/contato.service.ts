@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Contato } from '../componentes/contato/contato';
 import { HttpClient } from '@angular/common/http';
 import { Observable, retry } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 
 
@@ -9,15 +10,15 @@ import { Observable, retry } from 'rxjs';
   providedIn: 'root'
 })
 export class ContatoService {
-  
- 
-  private readonly API = 'http://localhost:3000/contatos'
+
+
+  private readonly API = environment + '/contatos'
 
   constructor(private http: HttpClient) {
-   
+
   }
 
-  
+
   obterContatos(): Observable<Contato[]> {
     return this.http.get<Contato[]>(this.API)
   }
@@ -48,5 +49,5 @@ export class ContatoService {
       return this.salvarContatos(contato)
     }
   }
-  
+
 }
