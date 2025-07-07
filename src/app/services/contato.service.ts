@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Contato } from '../componentes/contato/contato';
-
-import { Observable, of, retry } from 'rxjs';
-
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -26,39 +24,50 @@ export class ContatoService {
     return of(contatos);
   }
 
-  salvarContatos(contato: Contato) {
+  salvarContatos(contato: Contato): Observable<Contato> {
     const contatos = this.getContatosFromStorage();
+
+    // Gera um ID único com base no timestamp
+    contato.id = new Date().getTime();
+
     contatos.push(contato);
     this.saveContatosToStorage(contatos);
     return of(contato);
   }
 
-  buscarPorId(id: number): Observable<Contato> {
-    const contatos = this.getContatosFromStorage().find(
-      (contato) => contato.id === id
+  buscarPorId(id: number): Observable<Contato | undefined> {
+    const contato = this.getContatosFromStorage().find(
+      (c) => c.id === id
     );
-    return of(contatos!);
+    return of(contato);
   }
 
-  excluirPorId(id: number): Observable<Contato> {
-    const contatos = this.getContatosFromStorage(); // pega todos os contatos do localStorage
-    const contatoExcluido = contatos.find((contato) => contato.id === id)!; // encontra o contato a ser excluído
-    const contatosAtualizados = contatos.filter((contato) => contato.id !== id); // remove o contato da lista
-    this.saveContatosToStorage(contatosAtualizados); // salva a lista atualizada no localStorage
-    return of(contatoExcluido); // retorna o contato excluído como Observable
+  excluirPorId(id: number): Observable<Contato | undefined> {
+    const contatos = this.getContatosFromStorage();
+    const contatoExcluido = contatos.find((c) => c.id === id);
+
+    if (!contatoExcluido) {
+      return of(undefined);
+    }
+
+    const contatosAtualizados = contatos.filter((c) => c.id !== id);
+    this.saveContatosToStorage(contatosAtualizados);
+    return of(contatoExcluido);
   }
 
   editarContato(contato: Contato): Observable<Contato> {
     const contatos = this.getContatosFromStorage();
     const indice = contatos.findIndex((c) => c.id === contato.id);
+
     if (indice !== -1) {
       contatos[indice] = contato;
       this.saveContatosToStorage(contatos);
     }
+
     return of(contato);
   }
 
-  editarOuSalvarContato(contato: Contato) {
+  editarOuSalvarContato(contato: Contato): Observable<Contato> {
     if (contato.id) {
       return this.editarContato(contato);
     } else {
