@@ -27,7 +27,6 @@ export class ContatoService {
   salvarContatos(contato: Contato): Observable<Contato> {
     const contatos = this.getContatosFromStorage();
 
-    // Gera um ID único com base no timestamp
     contato.id = new Date().getTime();
 
     contatos.push(contato);
@@ -36,9 +35,7 @@ export class ContatoService {
   }
 
   buscarPorId(id: number): Observable<Contato | undefined> {
-    const contato = this.getContatosFromStorage().find(
-      (c) => c.id === id
-    );
+    const contato = this.getContatosFromStorage().find((c) => c.id === id);
     return of(contato);
   }
 
