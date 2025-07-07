@@ -51,7 +51,7 @@ export class FormularioContatoComponent implements OnInit {
   salvarcontato(){
     const novoContato = this.contatoForm.value;
     const id = this.activatedRoute.snapshot.paramMap.get('id')
-    novoContato.id = id ? parseInt(id) : null 
+    novoContato.id = id ? parseInt(id) : null
     this.contatoService.editarOuSalvarContato(novoContato).subscribe(() => {
       this.contatoForm.reset();
       this.router.navigateByUrl('/lista-contatos')
@@ -66,21 +66,25 @@ export class FormularioContatoComponent implements OnInit {
     return controle as FormControl
   }
 
-  
+
   cancelar(){
     this.contatoForm.reset()
     this.router.navigateByUrl('/lista-contatos')
   }
 
   carregarContato(){
-    const id = this.activatedRoute.snapshot.paramMap.get('id')
-    if(id){
-      this.contatoService.buscarPorId(parseInt(id)).subscribe((contato) =>{
+  const id = this.activatedRoute.snapshot.paramMap.get('id')
+  if(id){
+    this.contatoService.buscarPorId(parseInt(id)).subscribe((contato) =>{
+      if(contato) {
         this.contatoForm.patchValue(contato)
-      }) 
-
-    }
+      } else {
+        // Se quiser, trate aqui o caso de contato não encontrado
+        console.warn('Contato não encontrado para o id:', id)
+      }
+    })
   }
+}
 
   aoSelecionarArquivo(event: any){
     const file : File = event.target.files[0]
